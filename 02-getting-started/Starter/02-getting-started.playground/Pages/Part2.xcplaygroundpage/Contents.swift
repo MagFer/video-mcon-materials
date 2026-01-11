@@ -35,14 +35,55 @@ import SwiftUI
 //: ### URLSession
 // TODO: async function to download and decode RW domains
 
+enum fetchDomainsErrors: Error {
+    case noDataFileFound
+}
+
+func fetchDomains() async throws -> [Domain] {
+    guard let url = Bundle.main.url(
+        forResource: "swift-concurency-02-domains", 
+        withExtension: "json"
+    ) else {
+        throw fetchDomainsErrors.noDataFileFound
+    }
+    let (data, _) = try await URLSession.shared.data(from: url)
+    return try JSONDecoder().decode(Domains.self, from: data).data
+}
+
 // TODO: Task to run async function
+
+Task {
+    do {
+        let domains = try await fetchDomains()
+        for domain in domains {
+            let attr = domain.attributes
+            print("\(attr.name): \(attr.description) - \(attr.level)")
+        }
+    } catch {
+        print(error)
+    }
+}
 //: ### Asynchronous functions
 // TODO: Create asynchronous func helloPauseGoodbye()
 
+func hellowPauseGoodbye() async throws {
+    print("Hello function")
+    try await Task.sleep(until: .now + .seconds(2), clock: .continuous)
+    print("Goodbye function")
+}
+
 // TODO: Call asynchronous func helloPauseGoodbye()
+Task {
+    try await hellowPauseGoodbye()
+}
 //: ### Start here
 // TODO: Call asynchronous Task.sleep
 
+Task {
+    print("Hello")
+    try await Task.sleep(until: .now + .seconds(2), clock: .continuous)
+    print("Goodbye")
+}
 // sleep(_:) blocks thread
 sleep(1)
 print("wake up")
