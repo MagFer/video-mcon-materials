@@ -55,3 +55,7 @@ struct SymbolRow: View {
     })
   }
 }
+
+#Preview {
+  SymbolRow(symbolName: "AMD", selected: .constant(Set<String>()))
+}

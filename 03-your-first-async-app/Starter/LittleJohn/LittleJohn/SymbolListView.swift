@@ -83,6 +83,14 @@ struct SymbolListView: View {
         })
         .padding(.horizontal)
         // TODO: Call model.availableSymbols()
+        .task {
+          guard symbols.isEmpty else { return }
+          do {
+            symbols = try await model.availableSymbols()
+          } catch {
+            lastErrorMessage = error.localizedDescription
+          }
+        }
       }
     }
   }

@@ -46,7 +46,11 @@ class LittleJohnModel: ObservableObject {
     else {
       throw "The URL could not be created."
     }
-    return []
+    let (data, response) = try await URLSession.shared.data(from: url)
+    guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+      throw "The server responsed with an error."
+    }
+    return try JSONDecoder().decode([String].self, from: data)
   }
 
   /// Start live updates for the provided stock symbols.

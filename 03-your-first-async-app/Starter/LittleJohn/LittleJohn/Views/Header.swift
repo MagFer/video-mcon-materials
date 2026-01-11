@@ -40,3 +40,7 @@ struct Header: View {
       .padding(.bottom, 20)
   }
 }
+
+#Preview {
+  Header()
+}
