@@ -95,3 +95,21 @@ struct SymbolListView: View {
     }
   }
 }
+
+
+#if DEBUG
+private final class PreviewLittleJohnModel: ObservableObject {
+  func availableSymbols() async throws -> [String] {
+    ["AAPL", "GOOG", "MSFT", "TSLA"]
+  }
+}
+#Preview("Symbol List") {
+  // Provide a stable preview with sample data and a mock model
+  let mock = PreviewLittleJohnModel()
+  SymbolListView(
+    model: unsafeBitCast(mock, to: LittleJohnModel.self),
+    symbols: ["AAPL", "GOOG", "MSFT", "TSLA"],
+    selected: ["AAPL", "TSLA"]
+  )
+}
+#endif

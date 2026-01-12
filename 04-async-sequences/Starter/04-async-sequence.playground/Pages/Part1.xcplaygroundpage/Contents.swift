@@ -44,28 +44,47 @@ struct Attributes: Decodable {
   let level: String
 }
 // TODO: Extend Domains with getter
+extension Domains {
+    static var domains: [Domain] {
+        get async throws {
+            try await fetchDomains()
+        }
+    }
+}
 
 // TODO: Extend Domains with subscript
 extension Domains {
   enum Error: Swift.Error { case outOfRange }
   static subscript(_ index: Int) -> String {
     get async throws {
-      return ""
+      let domains = try await Self.domains
+      guard domains.indices.contains(index) else {
+        throw Error.outOfRange
+      }
+      return domains[index].attributes.name
     }
   }
 }
 func fetchDomains() async throws -> [Domain] {
-  let url = URL(string: "https://api.raywenderlich.com/api/domains")!
+  let url = Bundle.main.url(
+        forResource: "swift-concurency-04-domains",
+        withExtension: "json"
+  )!
+//  let url = URL(string: "http://ianmagarzo.com/documents/jsons/kodeco/swift-concurency-02-domains.json")!
   let (data, _) = try await URLSession.shared.data(from: url)
   return try JSONDecoder().decode(Domains.self, from: data).data
 }
 
 // TODO: Create a Task to use subscript
+Task {
+  dump(try await Domains[4])
+}
+
 
 Task {
   do {
-    let domains = try await fetchDomains()
-    for domain in domains {
+    //let domains = try await fetchDomains()
+      for domain in try await Domains.domains {
       let attr = domain.attributes
       print("\(attr.name): \(attr.description) - \(attr.level)")
     }

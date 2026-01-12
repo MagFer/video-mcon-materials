@@ -1,0 +1,60 @@
+{
+  "data": [
+    {
+      "attributes": {
+        "name": "iOS & Swift",
+        "description": "Learn iOS development with SwiftUI and UIKit",
+        "level": "production"
+      }
+    },
+    {
+      "attributes": {
+        "name": "Android & Kotlin",
+        "description": "Learn Android development in Kotlin",
+        "level": "production"
+      }
+    },
+    {
+      "attributes": {
+        "name": "Flutter & Dart",
+        "description": "Learn multi-platform development with Flutter & Dart",
+        "level": "production"
+      }
+    },
+    {
+      "attributes": {
+        "name": "Server-Side Swift",
+        "description": "Learn web development with Swift",
+        "level": "beta"
+      }
+    },
+    {
+      "attributes": {
+        "name": "Game Tech",
+        "description": "Learn how to create games using popular game technologies",
+        "level": "beta"
+      }
+    },
+    {
+      "attributes": {
+        "name": "RW Community",
+        "description": "Welcome to our Community Page, where you can find details about upcoming events, podcasts, and more!",
+        "level": "beta"
+      }
+    },
+    {
+      "attributes": {
+        "name": "macOS",
+        "description": "Learn macOS development",
+        "level": "archived"
+      }
+    },
+    {
+      "attributes": {
+        "name": "Archive",
+        "description": "",
+        "level": "archived"
+      }
+    }
+  ]
+}
