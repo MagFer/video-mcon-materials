@@ -24,7 +24,7 @@
 ///
 /// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 /// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+/// FITNESS FOR A PARTICULAR PURPOSE AND NONINF•RINGEMENT. IN NO EVENT SHALL THE
 /// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -55,9 +55,28 @@ class LittleJohnModel: ObservableObject {
 
   /// Start live updates for the provided stock symbols.
   func startTicker(_ selectedSymbols: [String]) async throws {
-    tickerSymbols = []
-    guard let url = URL(string: "http://localhost:8080/littlejohn/ticker?\(selectedSymbols.joined(separator: ","))") else {
+    await MainActor.run {
+      tickerSymbols = []
+    }
+    guard let url = URL(
+      string: "http://localhost:8080/littlejohn/ticker?\(selectedSymbols.joined(separator: ","))"
+    ) else {
       throw "The URL could not be created."
+    }
+    let (stream, response) = try await liveURLSession.bytes(from: url)
+    guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+      throw "The server responded with an error."
+    }
+    for try await line in stream.lines {
+      print(line)
+      let sortedSymbols = try JSONDecoder()
+        .decode([Stock].self, from: Data(line.utf8))
+        //.sorted(using: SortDescriptor(\.name, order: .forward))
+        .sorted(by: { $0.name < $1.name })
+      await MainActor.run {
+        tickerSymbols = sortedSymbols
+        print("Updated: \(Date())")
+      }
     }
   }
 

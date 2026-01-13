@@ -71,5 +71,17 @@ struct TickerView: View {
     .font(.custom("FantasqueSansMono-Regular", size: 18))
     .padding(.horizontal)
     // TODO: Call model.startTicker(selectedSymbols)
+    .task {
+      do {
+        // When the user navigates off the screen, child task will be removed.
+        try await model.startTicker(selectedSymbols)
+      } catch {
+        if let error = error as? URLError,
+           error.code == .cancelled {
+          return
+        }
+        lastErrorMessage = error.localizedDescription
+      }
+    }
   }
 }
