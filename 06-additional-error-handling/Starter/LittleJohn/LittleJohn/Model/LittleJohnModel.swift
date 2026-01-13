@@ -75,6 +75,10 @@ class LittleJohnModel: ObservableObject {
         print("Updated: \(Date())")
       }
     }
+    await MainActor.run {
+      tickerSymbols = []
+      // throw "Server stoped to send live updates."
+    }
   }
 
   /// A URL session that lets requests run indefinitely so we can receive live updates from server.

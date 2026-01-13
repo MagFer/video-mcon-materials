@@ -37,6 +37,7 @@ struct TickerView: View {
   let selectedSymbols: [String]
   @EnvironmentObject var model: LittleJohnModel
   @Environment(\.presentationMode) var presentationMode
+  @Environment(\.dismiss) var dismiss
   /// Description of the latest error to display to the user.
   @State var lastErrorMessage = "" {
     didSet { isDisplayingError = true }
@@ -80,6 +81,14 @@ struct TickerView: View {
           return
         }
         lastErrorMessage = error.localizedDescription
+//        if error as? String == "Server stoped to send live updates." {
+//          dismiss()
+//        }
+      }
+    }
+    .onChange(of: model.tickerSymbols.count) { newValue in
+      if newValue == 0 {
+        dismiss()
       }
     }
   }
