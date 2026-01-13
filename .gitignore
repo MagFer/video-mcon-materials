@@ -287,3 +287,7 @@ DerivedData/
 
 ## Gcc Patch
 /*.gcno
+
+# Swift Package Manager
+.build/
+.swiftpm/
