@@ -87,13 +87,21 @@ struct ListView: View {
         }
         .listStyle(InsetGroupedListStyle())
         .animation(.easeOut(duration: 0.33), value: files)
+        // TODO: Call model.availableFiles()
+        .task {
+          guard files.isEmpty else { return }
+          do {
+            files = try await model.availableFiles()
+          } catch {
+            lastErrorMessage = error.localizedDescription
+          }
+        }
       }
       .alert("Error", isPresented: $isDisplayingError, actions: {
         Button("Close", role: .cancel) { }
       }, message: {
         Text(lastErrorMessage)
       })
-      // TODO: Call model.availableFiles()
     }
   }
 }

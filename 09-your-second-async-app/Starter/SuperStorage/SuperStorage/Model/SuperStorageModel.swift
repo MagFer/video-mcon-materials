@@ -42,7 +42,14 @@ class SuperStorageModel: ObservableObject {
     guard let url = URL(string: "http://localhost:8080/files/list") else {
       throw "Could not create the URL."
     }
-    return []
+    let (data, response) = try await URLSession.shared.data(from: url)
+    guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+      throw "The server responded with an error."
+    }
+    guard let downloadFiles = try? JSONDecoder().decode([DownloadFile].self, from: data) else {
+      throw "The server response was not reconized."
+    }
+    return downloadFiles
   }
 
   /// Fetches server's status, user's usage quota
