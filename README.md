@@ -9,3 +9,9 @@ Each edition has its own branch, named `versions/[VERSION]`. The default branch 
 | Branch                                                                                  | Version | Release Date |
 | --------------------------------------------------------------------------------------- |:-------:|:------------:|
 | [versions/1.0](https://github.com/raywenderlich/video-mcon-materials/tree/versions/1.0) | 1.0     | 2022-10-18   |
+
+## Setup
+
+Start the server APIs by calling `swift run` in the `CourseServer` directory. This will start the server APIs on port 8080.
+
+Test the server is running by calling `curl http://localhost:8080/hello`
