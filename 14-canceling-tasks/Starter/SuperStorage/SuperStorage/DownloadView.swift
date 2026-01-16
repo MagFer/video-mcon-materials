@@ -42,6 +42,7 @@ struct DownloadView: View {
   /// Should display a download activity indicator.
   @State var isDownloadActive = false
   @State var duration = ""
+  @State var downloadTask: Task<Void, Error>?
 
   var body: some View {
     List {
@@ -57,15 +58,19 @@ struct DownloadView: View {
             do {
               fileData = try await model.download(file: file)
             } catch { }
-            isDownloadActive = false 
+            isDownloadActive = false
           }
         },
         downloadWithUpdatesAction: {
           // Download a file with UI progress updates.
           isDownloadActive = true
-          Task {
+          downloadTask = Task {
             do {
-              fileData = try await model.downloadWithProgress(file: file)
+              try await SuperStorageModel
+                .$supportsPartialDownloads
+                .withValue(file.name.lowercased().hasSuffix(".jpeg")) {
+                  fileData = try await model.downloadWithProgress(file: file)
+                }
             } catch { }
             isDownloadActive = false
           }
@@ -90,13 +95,14 @@ struct DownloadView: View {
     .animation(.easeOut(duration: 0.33), value: model.downloads)
     .listStyle(InsetGroupedListStyle())
     .toolbar(content: {
-      Button(action: {
+      Button(action: { model.stopDownloads = true
       }, label: { Text("Cancel Now") })
         .disabled(model.downloads.isEmpty)
     })
     .onDisappear {
       fileData = nil
       model.reset()
+      downloadTask?.cancel()
     }
   }
 }
